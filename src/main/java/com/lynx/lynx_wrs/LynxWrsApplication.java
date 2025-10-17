@@ -9,5 +9,4 @@ public class LynxWrsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LynxWrsApplication.class, args);
 	}
-
 }
