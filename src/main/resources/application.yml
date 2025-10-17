@@ -7,6 +7,9 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+    schemas: ${SCHEMA_NAME}
+    default-schema: ${DEFAULT_SCHEMA_NAME}
+    baseline-on-migrate: true
 
 
   datasource:
