@@ -1,6 +1,5 @@
 package com.lynx.lynx_wrs.db.entities;
 
-import com.lynx.lynx_wrs.db.entities.Role;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
