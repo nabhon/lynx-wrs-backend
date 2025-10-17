@@ -1,5 +1,7 @@
 package com.lynx.lynx_wrs.security;
 
+import com.lynx.lynx_wrs.db.entities.Users;
+import com.lynx.lynx_wrs.db.repositories.UserRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,8 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import th.co.exvention.pet.db.entities.Users;
-import th.co.exvention.pet.db.repositories.UserRepository;
 
 import java.util.List;
 
@@ -37,13 +37,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = "userAuth", key = "#email.toLowerCase()")// ใช้ Cacheable เพื่อเก็บผลลัพธ์การค้นหา User ตาม username
     public UserDetails loadUserByUsername(String email) {
-        Users user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-
-        List<SimpleGrantedAuthority> authorities = user.getUserRoles().stream()
-                .map(ur -> new SimpleGrantedAuthority(ur.getRoles().getName()))
-                .toList();
-
+        Users user = userRepository.findByEmail(email);
+        List<SimpleGrantedAuthority> authorities =
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
         // สร้าง CustomUserDetails ด้วยค่าพื้นฐาน (primitive) + authorities ที่ "พร้อมใช้"
         return new CustomUserDetails(
                 user.getId(),
@@ -65,11 +61,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserById(Long id) {
         Users user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found id=" + id));
-
         // ดึง roles ของ user และแปลงเป็น SimpleGrantedAuthority
-        List<SimpleGrantedAuthority> authorities = user.getUserRoles().stream()
-                .map(ur -> new SimpleGrantedAuthority(ur.getRoles().getName()))
-                .toList();
+        List<SimpleGrantedAuthority> authorities =
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
 
         // สร้าง CustomUserDetails ด้วยค่าพื้นฐาน (primitive) + authorities ที่ "พร้อมใช้"
         return new CustomUserDetails(
