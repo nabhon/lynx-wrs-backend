@@ -5,7 +5,9 @@ spring:
     name: lynx-wrs
 
   flyway:
-    enabled: false
+    enabled: true
+    locations: classpath:db/migration
+
 
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}

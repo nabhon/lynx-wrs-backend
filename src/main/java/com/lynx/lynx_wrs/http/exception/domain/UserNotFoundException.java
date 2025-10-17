@@ -1,6 +1,9 @@
 package com.lynx.lynx_wrs.http.exception.domain;
-import th.co.exvention.pet.http.exception.AppException;
-import th.co.exvention.pet.http.exception.ErrorCode;
+
+
+import com.lynx.lynx_wrs.http.exception.AppException;
+import com.lynx.lynx_wrs.http.exception.ErrorCode;
+
 /**
  * UserNotFoundException
  * Exception ที่เกิดขึ้นเมื่อไม่พบผู้ใช้ในระบบ
