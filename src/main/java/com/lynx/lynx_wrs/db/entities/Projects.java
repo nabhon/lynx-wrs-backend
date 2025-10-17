@@ -50,7 +50,7 @@ public class Projects {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_id", nullable = false)
+    @JoinColumn(name = "created_by", nullable = false)
     private Users createdBy;
 
     private LocalDateTime createdAt;
