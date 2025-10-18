@@ -78,8 +78,8 @@ public class Tasks {
     @Column(nullable = false)
     private TaskPriority priorities = TaskPriority.LOW;
 
-    private int estimatePoints = 0;
-    private int actualPoints = 0;
+    private Integer estimatePoints = 0;
+    private Integer actualPoints = 0;
 
     private LocalDate startDate;
     private LocalDate dueDate;
