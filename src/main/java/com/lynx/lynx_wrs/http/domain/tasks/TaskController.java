@@ -1,9 +1,13 @@
 package com.lynx.lynx_wrs.http.domain.tasks;
 
 
+import com.lynx.lynx_wrs.db.entities.Projects;
 import com.lynx.lynx_wrs.db.entities.Tasks;
+import com.lynx.lynx_wrs.db.repositories.ProjectsRepository;
+import com.lynx.lynx_wrs.http.domain.projects.service.ProjectService;
 import com.lynx.lynx_wrs.http.domain.tasks.dto.CreateTaskRequest;
 import com.lynx.lynx_wrs.http.domain.tasks.dto.EditTaskRequest;
+import com.lynx.lynx_wrs.http.domain.tasks.dto.ProjectDataResponse;
 import com.lynx.lynx_wrs.http.domain.tasks.dto.TaskDto;
 import com.lynx.lynx_wrs.http.domain.tasks.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +31,6 @@ public class TaskController {
 
     @Autowired
     private TaskService taskService;
-
-    @GetMapping
-    public ResponseEntity<?> getProjectTasks(@RequestParam("projectId") Long projectId) {
-        List<TaskDto> tasks = taskService.getProjectTasks(projectId);
-        return ResponseEntity.ok(Map.of("message","success","items", tasks));
-    }
 
     @PostMapping
     public ResponseEntity<?> createTask(@RequestBody CreateTaskRequest req) {

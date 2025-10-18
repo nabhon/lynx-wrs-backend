@@ -1,5 +1,6 @@
 package com.lynx.lynx_wrs.http.domain.users.dto;
 
+import com.lynx.lynx_wrs.db.entities.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,5 +11,13 @@ public class AuthDto {
     public static class LoginRequest {
         private String email;
         private String password;
+    }
+
+    @Data
+    public static class LoginResponse {
+        private String accessToken;
+        private String refreshToken;
+        private Long userId;
+        private Role role;
     }
 }

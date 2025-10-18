@@ -1,5 +1,6 @@
 package com.lynx.lynx_wrs.http.domain.users.services;
 
+import com.lynx.lynx_wrs.db.entities.Role;
 import com.lynx.lynx_wrs.db.entities.Users;
 import com.lynx.lynx_wrs.db.repositories.UserRepository;
 import com.lynx.lynx_wrs.http.domain.users.dto.AuthDto;
@@ -31,20 +32,27 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    public Map<String, String> login(AuthDto.LoginRequest req) {
+    public AuthDto.LoginResponse login(AuthDto.LoginRequest req) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(),req.getPassword()));
         } catch ( AuthenticationException e) {
             throw new AppException(ErrorCode.INVALID_CREDENTIALS, "Email or password incorrect");
         }
-        Long userId = userRepository.findByEmail(req.getEmail()).getId();
-        if (userId == null) {
+        Users users = userRepository.findByEmail(req.getEmail());
+        if (users == null) {
             throw new AppException(ErrorCode.USER_NOT_FOUND, "User not found");
         }
-        String access = jwtUtils.generateToken(req.getEmail(),  userId);
+        Long userId = users.getId();
+        Role role = users.getRole();
+        String access = jwtUtils.generateToken(req.getEmail(), userId);
         String refresh = jwtUtils.generateRefreshToken(req.getEmail(),  userId);
         refreshSessions.setLatest(req.getEmail(), jwtUtils.extractJti(refresh));
-        return Map.of("message","login success","accessToken", access, "refreshToken", refresh);
+        AuthDto.LoginResponse res = new AuthDto.LoginResponse();
+        res.setAccessToken(access);
+        res.setRefreshToken(refresh);
+        res.setUserId(userId);
+        res.setRole(role);
+        return res;
     }
 
     public Users getUserByToken() {

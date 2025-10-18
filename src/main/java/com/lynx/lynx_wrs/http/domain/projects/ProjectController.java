@@ -1,12 +1,20 @@
 package com.lynx.lynx_wrs.http.domain.projects;
 
 import com.lynx.lynx_wrs.db.entities.Projects;
+import com.lynx.lynx_wrs.http.domain.projects.dto.CreateProjectRequest;
 import com.lynx.lynx_wrs.http.domain.projects.service.ProjectService;
+import com.lynx.lynx_wrs.http.domain.tasks.dto.ProjectDataResponse;
+import com.lynx.lynx_wrs.http.domain.tasks.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/projects")
@@ -15,8 +23,24 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
+    @Autowired
+    private TaskService taskService;
+
+
     @GetMapping("/list")
     public ResponseEntity<?> getProjectList() {
         return ResponseEntity.ok(projectService.getProjectLists());
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getProjectData(@RequestParam("projectName") String projectName) {
+        ProjectDataResponse projectData = taskService.getProjectTasks(projectName);
+        return ResponseEntity.ok(Map.of("message","success","items", projectData.getTask(),"projectName",projectData.getProjectName(),"projectKey",projectData.getProjectKey(),"projectId",projectData.getProjectId()));
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createProject(@RequestBody CreateProjectRequest req) {
+        projectService.createProject(req);
+        return ResponseEntity.ok(Map.of("message","success"));
     }
 }

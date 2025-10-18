@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -18,6 +20,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthDto.LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.login(loginRequest));
+        AuthDto.LoginResponse res = authService.login(loginRequest);
+        return ResponseEntity.ok(Map.of("accessToken", res.getAccessToken(),"refreshToken", res.getRefreshToken(),"userId", res.getUserId(),"userRole", res.getRole()));
     }
 }

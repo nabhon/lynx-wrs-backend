@@ -23,4 +23,6 @@ public interface ProjectsRepository extends JpaRepository<Projects, Long> {
     WHERE u.id = :userId
 """)
     List<ProjectList> findProjectsListByUserId(@Param("userId") Long userId);
+
+    Projects findByName(String name);
 }

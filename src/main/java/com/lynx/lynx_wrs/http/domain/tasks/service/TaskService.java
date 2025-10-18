@@ -16,6 +16,7 @@ import com.lynx.lynx_wrs.db.repositories.TaskRepository;
 import com.lynx.lynx_wrs.db.repositories.UserRepository;
 import com.lynx.lynx_wrs.http.domain.tasks.dto.CreateTaskRequest;
 import com.lynx.lynx_wrs.http.domain.tasks.dto.EditTaskRequest;
+import com.lynx.lynx_wrs.http.domain.tasks.dto.ProjectDataResponse;
 import com.lynx.lynx_wrs.http.domain.tasks.dto.TaskDto;
 import com.lynx.lynx_wrs.http.domain.users.services.AuthService;
 import com.lynx.lynx_wrs.http.exception.AppException;
@@ -39,10 +40,21 @@ public class TaskService {
     private final CycleRepository cycleRepository;
     private final SprintRepository sprintRepository;
 
-    public List<TaskDto> getProjectTasks(Long projectId) {
+    public ProjectDataResponse getProjectTasks(String projectName) {
         Users requester = authService.getUserByToken();
-        checkPermission(requester,projectId);
-        return taskRepository.findByProjectId(projectId);
+        Projects projects = projectsRepository.findByName(projectName);
+        if (projects == null) {
+            throw new AppException(ErrorCode.PROJECT_NOT_FOUND);
+        }
+        checkPermission(requester,projects.getId());
+        List<TaskDto> task = taskRepository.findByProjectId(projects.getId());
+        ProjectDataResponse projectDataResponse = ProjectDataResponse.builder()
+                .projectId(projects.getId())
+                .projectName(projects.getName())
+                .projectKey(projects.getKey())
+                .task(task)
+                .build();
+        return projectDataResponse;
     }
 
     public Tasks addTasks(CreateTaskRequest req) {
