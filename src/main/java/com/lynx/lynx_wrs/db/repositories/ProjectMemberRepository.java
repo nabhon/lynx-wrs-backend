@@ -4,4 +4,5 @@ import com.lynx.lynx_wrs.db.entities.ProjectMembers;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectMemberRepository extends JpaRepository<ProjectMembers, Long> {
+    boolean existsByProjectIdAndUserId(Long projectId, Long userId);
 }
