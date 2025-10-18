@@ -14,6 +14,17 @@ public class AuthDto {
     }
 
     @Data
+    public static class RefreshRequest {
+        private String refreshToken;
+    }
+
+    @Data
+    public static class RefreshResponse {
+        private String accessToken;
+        private String refreshToken;
+    }
+
+    @Data
     public static class LoginResponse {
         private String accessToken;
         private String refreshToken;

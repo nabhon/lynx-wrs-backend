@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CreateTaskRequest {
     private Long projectId;
-    private Long cycleId;
-    private Long sprintId;
+    private Integer cycleCount;
+    private Integer sprintCount;
     private String taskKey;
     private String taskName;
     private String description;
@@ -22,7 +22,6 @@ public class CreateTaskRequest {
     private String status;
     private String priority;
     private Integer estimatePoints;
-    private Integer actualPoints;
     private LocalDate startDate;
     private LocalDate endDate;
     private Long assigneeId;

@@ -63,4 +63,24 @@ public class AuthService {
         Long userId = ((CustomUserDetails) authentication.getPrincipal()).getUserId();
         return userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED, "User not found"));
     }
+
+    public AuthDto.RefreshResponse refreshToken(String refreshToken) {
+        if (!jwtUtils.validateRefreshToken(refreshToken)) {
+            throw new AppException(ErrorCode.INVALID_JWT, "Refresh token ไม่ถูกต้องหรือหมดอายุ");
+        }
+        String email = jwtUtils.extractSubject(refreshToken);
+        String jti   = jwtUtils.extractJti(refreshToken);
+
+        refreshSessions.assertLatest(email, jti);
+        refreshSessions.revoke(jti);
+
+        Long userId = jwtUtils.extractUserId(refreshToken);
+        String newAccess  = jwtUtils.generateToken(email, userId);
+        String newRefresh = jwtUtils.generateRefreshToken(email, userId);
+        refreshSessions.setLatest(email, jwtUtils.extractJti(newRefresh));
+        AuthDto.RefreshResponse res = new AuthDto.RefreshResponse();
+        res.setAccessToken(newAccess);
+        res.setRefreshToken(newRefresh);
+        return res;
+    }
 }

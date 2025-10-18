@@ -61,10 +61,36 @@ public class TaskService {
         Users requester = authService.getUserByToken();
         checkPermission(requester,req.getProjectId());
         Projects project = findProject(req.getProjectId());
-        Cycles cycle = findCycle(req.getCycleId());
-        Sprints sprint = findSprint(req.getSprintId());
-        Users assignee = findUser(req.getAssigneeId());
-        Users auditor = findUser(req.getAuditorId());
+        Cycles cycle = cycleRepository.findByCycleCountAndProject(req.getCycleCount(),project);
+        if (req.getCycleCount() != null && req.getCycleCount() > 0) {
+            if (cycle == null) {
+                cycle = Cycles.builder()
+                        .cycleCount(req.getCycleCount())
+                        .project(project)
+                        .build();
+                cycleRepository.save(cycle);
+            }
+        }
+        Sprints sprint = sprintRepository.findBySprintCountAndCycle(req.getSprintCount(), cycle);
+        if (  req.getSprintCount() != null &&  req.getSprintCount() > 0 ) {
+            if (sprint == null) {
+                sprint = Sprints.builder()
+                        .sprintCount(req.getSprintCount())
+                        .cycle(cycle)
+                        .build();
+                sprintRepository.save(sprint);
+            }
+        }
+        Users assignee = null;
+        if (req.getAssigneeId() != null) {
+            assignee = userRepository.findById(req.getAssigneeId()).orElse(null);
+        }
+
+        Users auditor = null;
+        if (req.getAuditorId() != null) {
+            auditor = userRepository.findById(req.getAuditorId()).orElse(null);
+        }
+
         Tasks task = Tasks.builder()
                 .project(project)
                 .cycle(cycle)
@@ -76,7 +102,6 @@ public class TaskService {
                 .status(TaskStatus.valueOf(req.getStatus()))
                 .priorities(TaskPriority.valueOf(req.getPriority()))
                 .estimatePoints(req.getEstimatePoints())
-                .actualPoints(req.getActualPoints())
                 .startDate(req.getStartDate())
                 .dueDate(req.getEndDate())
                 .assignedTo(assignee)

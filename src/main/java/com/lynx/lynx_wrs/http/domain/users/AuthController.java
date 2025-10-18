@@ -23,4 +23,14 @@ public class AuthController {
         AuthDto.LoginResponse res = authService.login(loginRequest);
         return ResponseEntity.ok(Map.of("accessToken", res.getAccessToken(),"refreshToken", res.getRefreshToken(),"userId", res.getUserId(),"userRole", res.getRole()));
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody AuthDto.RefreshRequest req) {
+        String refreshToken = req.getRefreshToken();
+        if (refreshToken == null) {
+            throw new RuntimeException("refreshToken is null");
+        }
+        AuthDto.RefreshResponse res = authService.refreshToken(refreshToken);
+        return ResponseEntity.ok(Map.of("message","success","accessToken",res.getAccessToken(),"refreshToken",res.getRefreshToken()));
+    }
 }
