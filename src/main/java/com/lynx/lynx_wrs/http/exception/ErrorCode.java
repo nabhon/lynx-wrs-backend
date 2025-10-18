@@ -92,7 +92,10 @@ public enum ErrorCode {
     // Common
     BAD_REQUEST("COMMON-001", HttpStatus.BAD_REQUEST, "คำขอไม่ถูกต้อง"),
     INTERNAL_ERROR("COMMON-500", HttpStatus.INTERNAL_SERVER_ERROR, "เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์"),
-    UNAUTHORIZED("COMMON-401", HttpStatus.UNAUTHORIZED, "ไม่พบ Token หรือ Token ไม่ถูกต้อง");
+    UNAUTHORIZED("COMMON-401", HttpStatus.UNAUTHORIZED, "ไม่พบ Token หรือ Token ไม่ถูกต้อง"),
+
+    //Project
+    PROJECT_NOT_FOUND("PROJECT-001", HttpStatus.NOT_FOUND, "Project Not Found");
 
     private final String code;
     private final HttpStatus status;

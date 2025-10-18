@@ -81,10 +81,7 @@ public class SecurityConfig {
                                 "/api/auth/login",
                                 "/api/auth/register/**",
                                 "/api/auth/password/**",
-                                "/api/tags/**",
-                                "/api/pet/**",
-                                "/api/rule/**",
-                                "/api/community/**",
+                                "/api/tasks/**",
                                 "/api/auth/refresh"
                         ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

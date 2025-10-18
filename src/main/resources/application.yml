@@ -11,8 +11,9 @@ spring:
     default-schema: ${DEFAULT_SCHEMA_NAME}
     baseline-on-migrate: true
 
-
   datasource:
+    hikari:
+      max-lifetime: 6900000
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
     username: ${DB_USER}
     password: ${DB_PASSWORD}

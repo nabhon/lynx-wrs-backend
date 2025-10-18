@@ -1,16 +1,19 @@
 package com.lynx.lynx_wrs.http.domain.users.services;
 
+import com.lynx.lynx_wrs.db.entities.Users;
 import com.lynx.lynx_wrs.db.repositories.UserRepository;
 import com.lynx.lynx_wrs.http.domain.users.dto.AuthDto;
 import com.lynx.lynx_wrs.http.exception.AppException;
 import com.lynx.lynx_wrs.http.exception.ErrorCode;
+import com.lynx.lynx_wrs.security.CustomUserDetails;
 import com.lynx.lynx_wrs.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -42,5 +45,14 @@ public class AuthService {
         String refresh = jwtUtils.generateRefreshToken(req.getEmail(),  userId);
         refreshSessions.setLatest(req.getEmail(), jwtUtils.extractJti(refresh));
         return Map.of("message","login success","accessToken", access, "refreshToken", refresh);
+    }
+
+    public Users getUserByToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHORIZED, "Token Invalid");
+        }
+        Long userId = ((CustomUserDetails) authentication.getPrincipal()).getUserId();
+        return userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED, "User not found"));
     }
 }
