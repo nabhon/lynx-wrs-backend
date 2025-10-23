@@ -31,4 +31,12 @@ public class AuthDto {
         private Long userId;
         private Role role;
     }
+
+    @Data
+    public static class RegisterRequest {
+        private String email;
+        private String name;
+        private String surname;
+        private Role role;
+    }
 }

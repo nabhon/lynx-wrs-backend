@@ -33,4 +33,10 @@ public class AuthController {
         AuthDto.RefreshResponse res = authService.refreshToken(refreshToken);
         return ResponseEntity.ok(Map.of("message","success","accessToken",res.getAccessToken(),"refreshToken",res.getRefreshToken()));
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody AuthDto.RegisterRequest req) {
+        String password = authService.registerMember(req);
+        return  ResponseEntity.ok(Map.of("message","success","password",password));
+    }
 }
