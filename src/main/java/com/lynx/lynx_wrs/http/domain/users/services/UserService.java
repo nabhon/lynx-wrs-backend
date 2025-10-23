@@ -39,4 +39,12 @@ public class UserService {
                 .lastLogin(user.getLastLoginAt())
                 .build();
     }
+
+    public void deleteUser(Long id) {
+        Users admin = authService.getUserByToken();
+        if (admin.getRole() == Role.USER) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+        userRepository.deleteById(id);
+    }
 }
