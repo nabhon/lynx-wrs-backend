@@ -2,6 +2,7 @@ package com.lynx.lynx_wrs.http.domain.tasks.service;
 
 import com.lynx.lynx_wrs.db.entities.Cycles;
 import com.lynx.lynx_wrs.db.entities.Projects;
+import com.lynx.lynx_wrs.db.entities.Role;
 import com.lynx.lynx_wrs.db.entities.Sprints;
 import com.lynx.lynx_wrs.db.entities.TaskPriority;
 import com.lynx.lynx_wrs.db.entities.TaskStatus;
@@ -46,7 +47,9 @@ public class TaskService {
         if (projects == null) {
             throw new AppException(ErrorCode.PROJECT_NOT_FOUND);
         }
-        checkPermission(requester,projects.getId());
+        if (!requester.getRole().equals(Role.ADMIN)) {
+            checkPermission(requester, projects.getId());
+        }
         List<TaskDto> task = taskRepository.findByProjectId(projects.getId());
         ProjectDataResponse projectDataResponse = ProjectDataResponse.builder()
                 .projectId(projects.getId())
