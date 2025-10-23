@@ -101,13 +101,18 @@ public class TaskService {
                 .type(TaskType.valueOf(req.getType()))
                 .status(TaskStatus.valueOf(req.getStatus()))
                 .priorities(TaskPriority.valueOf(req.getPriority()))
-                .estimatePoints(req.getEstimatePoints())
                 .startDate(req.getStartDate())
                 .dueDate(req.getEndDate())
                 .assignedTo(assignee)
                 .auditedBy(auditor)
                 .createdBy(requester)
                 .build();
+        if (req.getActualPoints() != null && req.getActualPoints() >= 0) {
+            task.setActualPoints(req.getActualPoints());
+        }
+        if (req.getEstimatePoints() != null && req.getEstimatePoints() >= 0) {
+            task.setEstimatePoints(req.getEstimatePoints());
+        }
         return taskRepository.save(task);
     }
 
