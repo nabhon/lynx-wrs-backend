@@ -101,6 +101,7 @@ public class TaskService {
                 .type(TaskType.valueOf(req.getType()))
                 .status(TaskStatus.valueOf(req.getStatus()))
                 .priorities(TaskPriority.valueOf(req.getPriority()))
+                .actualPoints(req.getActualPoints())
                 .estimatePoints(req.getEstimatePoints())
                 .startDate(req.getStartDate())
                 .dueDate(req.getEndDate())

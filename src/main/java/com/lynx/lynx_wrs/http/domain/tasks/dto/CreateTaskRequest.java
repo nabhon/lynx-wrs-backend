@@ -21,6 +21,7 @@ public class CreateTaskRequest {
     private String type;
     private String status;
     private String priority;
+    private Integer actualPoints;
     private Integer estimatePoints;
     private LocalDate startDate;
     private LocalDate endDate;

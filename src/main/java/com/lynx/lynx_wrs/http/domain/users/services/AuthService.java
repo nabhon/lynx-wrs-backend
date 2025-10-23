@@ -38,10 +38,7 @@ public class AuthService {
         } catch ( AuthenticationException e) {
             throw new AppException(ErrorCode.INVALID_CREDENTIALS, "Email or password incorrect");
         }
-        Users users = userRepository.findByEmail(req.getEmail());
-        if (users == null) {
-            throw new AppException(ErrorCode.USER_NOT_FOUND, "User not found");
-        }
+        Users users = userRepository.findByEmail(req.getEmail()).orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED, "User not found"));
         Long userId = users.getId();
         Role role = users.getRole();
         String access = jwtUtils.generateToken(req.getEmail(), userId);
