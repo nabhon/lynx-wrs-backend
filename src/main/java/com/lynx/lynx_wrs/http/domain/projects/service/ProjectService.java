@@ -77,4 +77,12 @@ public class ProjectService {
         projectsRepository.save(project);
         projectMemberRepository.save(projectMembers);
     }
+
+    public void deleteProject(Long id) {
+        Users requester = authService.getUserByToken();
+        if (!requester.getRole().equals(Role.ADMIN)) {
+            throw new AppException(ErrorCode.UNAUTHORIZED,"UNAUTHORIZED");
+        }
+        projectsRepository.deleteById(id);
+    }
 }
