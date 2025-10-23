@@ -83,16 +83,17 @@ public class SecurityConfig {
                                 "/api/auth/password/**",
                                 "/api/tasks/**",
                                 "/api/tasks",
-                                "/api/auth/refresh",
-                                "/api/projects/**"
+                                "/api/auth/refresh"
                         ).permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**","/api/projects/all").hasRole("ADMIN")
                         .requestMatchers("/api/moderetor/**").hasAnyRole("MODERATOR", "ADMIN")
                         .requestMatchers(
                                 "/api/user/**",
                                 "/api/auth/user",
                                 "/api/users",
-                                "/api/community/**")
+                                "/api/community/**",
+                                "/api/projects/",
+                                "/api/projects/list")
                         .hasAnyRole("USER", "ADMIN","MODERATOR")
                         .anyRequest().authenticated()
                 )

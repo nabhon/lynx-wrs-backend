@@ -16,6 +16,7 @@ import com.lynx.lynx_wrs.http.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,24 @@ public class ProjectService {
             throw new AppException(ErrorCode.UNAUTHORIZED,"UNAUTHORIZED");
         }
         List<ProjectList> projectLists = projectsRepository.findProjectsListByUserId(requester.getId());
+        return Map.of("message","success","items",projectLists);
+    }
+
+    public Map<String,Object> getAllProject() {
+        Users requester = authService.getUserByToken();
+        if (requester == null) {
+            throw new AppException(ErrorCode.UNAUTHORIZED,"UNAUTHORIZED");
+        }
+        List<Projects> projectAll = projectsRepository.findAll();
+        List<ProjectList> projectLists = new ArrayList<>();
+        for (Projects project : projectAll) {
+            ProjectList projectList = ProjectList.builder()
+                    .projectId(project.getId())
+                    .projectKey(project.getKey())
+                    .projectName(project.getName())
+                    .build();
+            projectLists.add(projectList);
+        }
         return Map.of("message","success","items",projectLists);
     }
 

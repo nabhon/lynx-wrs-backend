@@ -43,4 +43,9 @@ public class ProjectController {
         projectService.createProject(req);
         return ResponseEntity.ok(Map.of("message","success"));
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllProjects() {
+        return ResponseEntity.ok(projectService.getAllProject());
+    }
 }
