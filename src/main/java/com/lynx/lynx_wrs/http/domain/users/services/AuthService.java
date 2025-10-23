@@ -15,9 +15,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,8 @@ public class AuthService {
     private final RefreshSessionService refreshSessions;
 
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     public AuthDto.LoginResponse login(AuthDto.LoginRequest req) {
         try {
@@ -49,6 +54,7 @@ public class AuthService {
         res.setRefreshToken(refresh);
         res.setUserId(userId);
         res.setRole(role);
+        users.setLastLoginAt(LocalDateTime.now());
         return res;
     }
 
@@ -79,5 +85,22 @@ public class AuthService {
         res.setAccessToken(newAccess);
         res.setRefreshToken(newRefresh);
         return res;
+    }
+
+    public String registerMember(AuthDto.RegisterRequest req) {
+        Users admin = getUserByToken();
+        if (admin.getRole() == Role.USER) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+        String rawPassword = req.getName().toLowerCase();
+        String hashedPassword = passwordEncoder.encode(rawPassword);
+        Users newUser = Users.builder()
+                .email(req.getEmail())
+                .password(hashedPassword)
+                .displayName(req.getName()+" "+req.getSurname())
+                .role(req.getRole())
+                .build();
+        userRepository.save(newUser);
+        return rawPassword;
     }
 }
