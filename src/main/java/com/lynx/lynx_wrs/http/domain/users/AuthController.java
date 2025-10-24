@@ -21,7 +21,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthDto.LoginRequest loginRequest) {
         AuthDto.LoginResponse res = authService.login(loginRequest);
-        return ResponseEntity.ok(Map.of("accessToken", res.getAccessToken(),"refreshToken", res.getRefreshToken(),"userId", res.getUserId(),"userRole", res.getRole()));
+        return ResponseEntity.ok(Map.of("accessToken", res.getAccessToken(),
+                "refreshToken", res.getRefreshToken(),
+                "userId", res.getUserId(),
+                "userRole", res.getUserRole(),
+                "userDisplayName", res.getUserDisplayName(),
+                "userEmail", res.getUserEmail()));
     }
 
     @PostMapping("/refresh")
@@ -31,7 +36,8 @@ public class AuthController {
             throw new RuntimeException("refreshToken is null");
         }
         AuthDto.RefreshResponse res = authService.refreshToken(refreshToken);
-        return ResponseEntity.ok(Map.of("message","success","accessToken",res.getAccessToken(),"refreshToken",res.getRefreshToken()));
+        return ResponseEntity.ok(Map.of("message","success"
+                ,"accessToken",res.getAccessToken(), "refreshToken",res.getRefreshToken()));
     }
 
     @PostMapping("/register")

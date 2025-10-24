@@ -26,6 +26,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of("messages", "success", "items", users));
     }
 
+
     @DeleteMapping
     public ResponseEntity<?> deleteUsers(@RequestParam(name = "id") Long id) {
         userService.deleteUser(id);

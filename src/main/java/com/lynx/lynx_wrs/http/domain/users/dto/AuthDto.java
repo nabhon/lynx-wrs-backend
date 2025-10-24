@@ -28,8 +28,10 @@ public class AuthDto {
     public static class LoginResponse {
         private String accessToken;
         private String refreshToken;
+        private String userEmail;
+        private String userDisplayName;
         private Long userId;
-        private Role role;
+        private Role userRole;
     }
 
     @Data

@@ -53,7 +53,9 @@ public class AuthService {
         res.setAccessToken(access);
         res.setRefreshToken(refresh);
         res.setUserId(userId);
-        res.setRole(role);
+        res.setUserRole(role);
+        res.setUserEmail(users.getEmail());
+        res.setUserDisplayName(users.getDisplayName());
         users.setLastLoginAt(LocalDateTime.now());
         return res;
     }
