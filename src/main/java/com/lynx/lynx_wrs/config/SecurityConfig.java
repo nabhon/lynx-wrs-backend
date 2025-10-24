@@ -86,7 +86,10 @@ public class SecurityConfig {
                                 "/api/auth/refresh"
                         ).permitAll()
                         .requestMatchers("/api/admin/**","/api/projects/all").hasRole("ADMIN")
-                        .requestMatchers("/api/moderetor/**").hasAnyRole("MODERATOR", "ADMIN")
+                        .requestMatchers(
+                                "/api/moderetor/**",
+                                "/api/projects/delete"
+                        ).hasAnyRole("MODERATOR", "ADMIN")
                         .requestMatchers(
                                 "/api/user/**",
                                 "/api/auth/user",

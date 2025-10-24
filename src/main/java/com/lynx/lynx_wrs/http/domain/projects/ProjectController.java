@@ -7,6 +7,7 @@ import com.lynx.lynx_wrs.http.domain.tasks.dto.ProjectDataResponse;
 import com.lynx.lynx_wrs.http.domain.tasks.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +42,12 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<?> createProject(@RequestBody CreateProjectRequest req) {
         projectService.createProject(req);
+        return ResponseEntity.ok(Map.of("message","success"));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteProject(@RequestParam(name = "id") Long id) {
+        projectService.deleteProject(id);
         return ResponseEntity.ok(Map.of("message","success"));
     }
 
