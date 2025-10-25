@@ -41,4 +41,12 @@ public class AuthDto {
         private String surname;
         private Role role;
     }
+
+
+    @Data
+    public static class ChangePasswordRequest {
+        private String currentPassword;
+        private String newPassword;
+    }
+
 }
