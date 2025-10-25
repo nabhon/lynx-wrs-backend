@@ -59,4 +59,10 @@ public class TaskController {
     public ResponseEntity<?> myPendingReview() {
         return ResponseEntity.ok(taskService.getMyPendingReviewTasks());
     }
+
+    @GetMapping("/{taskId}")
+    public ResponseEntity<?> getTask(@PathVariable("taskId") Long taskId) {
+        TaskDto dto = taskService.getTaskById(taskId);
+        return ResponseEntity.ok(Map.of("message", "success", "item", dto));
+    }
 }

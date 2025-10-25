@@ -218,4 +218,16 @@ public class TaskService {
         return Map.of("message", "success", "items", items);
     }
 
+    public TaskDto getTaskById(Long taskId) {
+        Users requester = authService.getUserByToken();
+        TaskDto dto = taskRepository.findDtoById(taskId);
+        if (dto == null) {
+            throw new AppException(ErrorCode.COMMUNITY_NOT_FOUND, "Task not found");
+        }
+        if (!requester.getRole().equals(Role.ADMIN)) {
+            checkPermission(requester, dto.getProjectId());
+        }
+        return dto;
+    }
+
 }
