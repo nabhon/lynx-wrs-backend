@@ -18,6 +18,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthDto.LoginRequest loginRequest) {
         AuthDto.LoginResponse res = authService.login(loginRequest);
@@ -44,5 +45,11 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody AuthDto.RegisterRequest req) {
         String password = authService.registerMember(req);
         return  ResponseEntity.ok(Map.of("message","success","password",password));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody AuthDto.ChangePasswordRequest req) {
+        authService.changePassword(req.getCurrentPassword(), req.getNewPassword());
+        return ResponseEntity.ok(Map.of("message","success"));
     }
 }
