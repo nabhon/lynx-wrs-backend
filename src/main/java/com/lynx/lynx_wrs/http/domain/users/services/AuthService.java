@@ -17,6 +17,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -89,6 +90,7 @@ public class AuthService {
         return res;
     }
 
+    @Transactional
     public String registerMember(AuthDto.RegisterRequest req) {
         Users admin = getUserByToken();
         if (admin.getRole() == Role.USER) {
