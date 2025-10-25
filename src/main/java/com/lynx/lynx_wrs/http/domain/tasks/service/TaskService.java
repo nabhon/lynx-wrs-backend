@@ -205,4 +205,17 @@ public class TaskService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
+
+    public Map<String, Object> getMyAssignedOpenTasks() {
+        Users me = authService.getUserByToken();
+        List<TaskDto> items = taskRepository.findAssignedOpenByUser(me.getId());
+        return Map.of("message", "success", "items", items);
+    }
+
+    public Map<String, Object> getMyPendingReviewTasks() {
+        Users me = authService.getUserByToken();
+        List<TaskDto> items = taskRepository.findPendingReviewByAuditor(me.getId());
+        return Map.of("message", "success", "items", items);
+    }
+
 }
