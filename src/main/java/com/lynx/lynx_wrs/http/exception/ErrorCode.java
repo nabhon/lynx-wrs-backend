@@ -94,8 +94,12 @@ public enum ErrorCode {
     INTERNAL_ERROR("COMMON-500", HttpStatus.INTERNAL_SERVER_ERROR, "เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์"),
     UNAUTHORIZED("COMMON-401", HttpStatus.UNAUTHORIZED, "ไม่พบ Token หรือ Token ไม่ถูกต้อง"),
 
+    //ProjectMenbers
+    USER_NOT_FOUND_IN_PROJECT("PROJECT-002", HttpStatus.NOT_FOUND, "User Not Found In Project"),
+
     //Project
     PROJECT_NOT_FOUND("PROJECT-001", HttpStatus.NOT_FOUND, "Project Not Found");
+
 
     private final String code;
     private final HttpStatus status;

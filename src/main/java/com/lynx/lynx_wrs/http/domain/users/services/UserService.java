@@ -8,6 +8,7 @@ import com.lynx.lynx_wrs.http.exception.AppException;
 import com.lynx.lynx_wrs.http.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -40,6 +41,7 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
     public void deleteUser(Long id) {
         Users admin = authService.getUserByToken();
         if (admin.getRole() == Role.USER) {

@@ -24,6 +24,7 @@ import com.lynx.lynx_wrs.http.exception.AppException;
 import com.lynx.lynx_wrs.http.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -60,6 +61,7 @@ public class TaskService {
         return projectDataResponse;
     }
 
+    @Transactional
     public Tasks addTasks(CreateTaskRequest req) {
         Users requester = authService.getUserByToken();
         checkPermission(requester,req.getProjectId());
@@ -119,12 +121,14 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
+    @Transactional
     public void deleteTasks(Long taskId,Long projectId) {
         Users requester = authService.getUserByToken();
         checkPermission(requester,projectId);
         taskRepository.deleteById(taskId);
     }
 
+    @Transactional
     public void editTasks(EditTaskRequest req) {
         Users requester = authService.getUserByToken();
         checkPermission(requester,req.getProjectId());
@@ -160,6 +164,7 @@ public class TaskService {
         task.setUpdatedAt(LocalDateTime.now());
         taskRepository.save(task);
     }
+
 
     private void checkPermission(Users requester, Long projectId) {
         if (requester == null) {
