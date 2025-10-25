@@ -28,7 +28,17 @@ public class AuthDto {
     public static class LoginResponse {
         private String accessToken;
         private String refreshToken;
+        private String userEmail;
+        private String userDisplayName;
         private Long userId;
+        private Role userRole;
+    }
+
+    @Data
+    public static class RegisterRequest {
+        private String email;
+        private String name;
+        private String surname;
         private Role role;
     }
 }

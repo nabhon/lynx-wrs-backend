@@ -2,6 +2,7 @@ package com.lynx.lynx_wrs.http.domain.tasks.service;
 
 import com.lynx.lynx_wrs.db.entities.Cycles;
 import com.lynx.lynx_wrs.db.entities.Projects;
+import com.lynx.lynx_wrs.db.entities.Role;
 import com.lynx.lynx_wrs.db.entities.Sprints;
 import com.lynx.lynx_wrs.db.entities.TaskPriority;
 import com.lynx.lynx_wrs.db.entities.TaskStatus;
@@ -23,6 +24,7 @@ import com.lynx.lynx_wrs.http.exception.AppException;
 import com.lynx.lynx_wrs.http.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,7 +48,9 @@ public class TaskService {
         if (projects == null) {
             throw new AppException(ErrorCode.PROJECT_NOT_FOUND);
         }
-        checkPermission(requester,projects.getId());
+        if (!requester.getRole().equals(Role.ADMIN)) {
+            checkPermission(requester, projects.getId());
+        }
         List<TaskDto> task = taskRepository.findByProjectId(projects.getId());
         ProjectDataResponse projectDataResponse = ProjectDataResponse.builder()
                 .projectId(projects.getId())
@@ -57,9 +61,12 @@ public class TaskService {
         return projectDataResponse;
     }
 
+    @Transactional
     public Tasks addTasks(CreateTaskRequest req) {
         Users requester = authService.getUserByToken();
-        checkPermission(requester,req.getProjectId());
+        if (!requester.getRole().equals(Role.ADMIN)) {
+            checkPermission(requester, req.getProjectId());
+        }
         Projects project = findProject(req.getProjectId());
         Cycles cycle = cycleRepository.findByCycleCountAndProject(req.getCycleCount(),project);
         if (req.getCycleCount() != null && req.getCycleCount() > 0) {
@@ -101,25 +108,35 @@ public class TaskService {
                 .type(TaskType.valueOf(req.getType()))
                 .status(TaskStatus.valueOf(req.getStatus()))
                 .priorities(TaskPriority.valueOf(req.getPriority()))
-                .estimatePoints(req.getEstimatePoints())
                 .startDate(req.getStartDate())
                 .dueDate(req.getEndDate())
                 .assignedTo(assignee)
                 .auditedBy(auditor)
                 .createdBy(requester)
                 .build();
+        if (req.getActualPoints() != null && req.getActualPoints() >= 0) {
+            task.setActualPoints(req.getActualPoints());
+        }
+        if (req.getEstimatePoints() != null && req.getEstimatePoints() >= 0) {
+            task.setEstimatePoints(req.getEstimatePoints());
+        }
         return taskRepository.save(task);
     }
 
+    @Transactional
     public void deleteTasks(Long taskId,Long projectId) {
         Users requester = authService.getUserByToken();
         checkPermission(requester,projectId);
         taskRepository.deleteById(taskId);
     }
 
+    @Transactional
     public void editTasks(EditTaskRequest req) {
         Users requester = authService.getUserByToken();
-        checkPermission(requester,req.getProjectId());
+
+        if (!requester.getRole().equals(Role.ADMIN)) {
+            checkPermission(requester, req.getProjectId());
+        }
         Tasks task = findTask(req.getTaskId());
 
         if (req.getCycleId() != null) {
@@ -152,6 +169,7 @@ public class TaskService {
         task.setUpdatedAt(LocalDateTime.now());
         taskRepository.save(task);
     }
+
 
     private void checkPermission(Users requester, Long projectId) {
         if (requester == null) {

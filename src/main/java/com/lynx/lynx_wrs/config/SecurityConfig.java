@@ -83,15 +83,26 @@ public class SecurityConfig {
                                 "/api/auth/password/**",
                                 "/api/tasks/**",
                                 "/api/tasks",
-                                "/api/auth/refresh",
-                                "/api/projects/**"
+                                "/api/auth/refresh"
                         ).permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/moderetor/**").hasAnyRole("MODERATOR", "ADMIN")
+                        .requestMatchers("/api/admin/**"
+                                ,"/api/projects/all"
+                                ).hasRole("ADMIN")
+                        .requestMatchers(
+                                "/api/moderetor/**",
+                                "/api/projects/delete"
+                                ,"/api/projects/members"
+                                ,"/api/projects/members/remove"
+                                ,"/api/projects/members/add"
+                                ,"/api/projects/candidates"
+                        ).hasAnyRole("MODERATOR", "ADMIN")
                         .requestMatchers(
                                 "/api/user/**",
                                 "/api/auth/user",
-                                "/api/community/**")
+                                "/api/users",
+                                "/api/community/**",
+                                "/api/projects/",
+                                "/api/projects/list")
                         .hasAnyRole("USER", "ADMIN","MODERATOR")
                         .anyRequest().authenticated()
                 )

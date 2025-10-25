@@ -37,7 +37,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = "userAuth", key = "#email.toLowerCase()")// ใช้ Cacheable เพื่อเก็บผลลัพธ์การค้นหา User ตาม username
     public UserDetails loadUserByUsername(String email) {
-        Users user = userRepository.findByEmail(email);
+        Users user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found email=" + email));
         List<SimpleGrantedAuthority> authorities =
                 List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
         // สร้าง CustomUserDetails ด้วยค่าพื้นฐาน (primitive) + authorities ที่ "พร้อมใช้"

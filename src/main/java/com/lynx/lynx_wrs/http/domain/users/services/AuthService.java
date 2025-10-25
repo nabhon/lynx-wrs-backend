@@ -15,9 +15,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,16 +36,15 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     public AuthDto.LoginResponse login(AuthDto.LoginRequest req) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(),req.getPassword()));
         } catch ( AuthenticationException e) {
             throw new AppException(ErrorCode.INVALID_CREDENTIALS, "Email or password incorrect");
         }
-        Users users = userRepository.findByEmail(req.getEmail());
-        if (users == null) {
-            throw new AppException(ErrorCode.USER_NOT_FOUND, "User not found");
-        }
+        Users users = userRepository.findByEmail(req.getEmail()).orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED, "User not found"));
         Long userId = users.getId();
         Role role = users.getRole();
         String access = jwtUtils.generateToken(req.getEmail(), userId);
@@ -51,7 +54,10 @@ public class AuthService {
         res.setAccessToken(access);
         res.setRefreshToken(refresh);
         res.setUserId(userId);
-        res.setRole(role);
+        res.setUserRole(role);
+        res.setUserEmail(users.getEmail());
+        res.setUserDisplayName(users.getDisplayName());
+        users.setLastLoginAt(LocalDateTime.now());
         return res;
     }
 
@@ -82,5 +88,23 @@ public class AuthService {
         res.setAccessToken(newAccess);
         res.setRefreshToken(newRefresh);
         return res;
+    }
+
+    @Transactional
+    public String registerMember(AuthDto.RegisterRequest req) {
+        Users admin = getUserByToken();
+        if (admin.getRole() == Role.USER) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+        String rawPassword = req.getName().toLowerCase();
+        String hashedPassword = passwordEncoder.encode(rawPassword);
+        Users newUser = Users.builder()
+                .email(req.getEmail())
+                .password(hashedPassword)
+                .displayName(req.getName()+" "+req.getSurname())
+                .role(req.getRole())
+                .build();
+        userRepository.save(newUser);
+        return rawPassword;
     }
 }
