@@ -64,7 +64,9 @@ public class TaskService {
     @Transactional
     public Tasks addTasks(CreateTaskRequest req) {
         Users requester = authService.getUserByToken();
-        checkPermission(requester,req.getProjectId());
+        if (!requester.getRole().equals(Role.ADMIN)) {
+            checkPermission(requester, req.getProjectId());
+        }
         Projects project = findProject(req.getProjectId());
         Cycles cycle = cycleRepository.findByCycleCountAndProject(req.getCycleCount(),project);
         if (req.getCycleCount() != null && req.getCycleCount() > 0) {
@@ -131,7 +133,10 @@ public class TaskService {
     @Transactional
     public void editTasks(EditTaskRequest req) {
         Users requester = authService.getUserByToken();
-        checkPermission(requester,req.getProjectId());
+
+        if (!requester.getRole().equals(Role.ADMIN)) {
+            checkPermission(requester, req.getProjectId());
+        }
         Tasks task = findTask(req.getTaskId());
 
         if (req.getCycleId() != null) {
