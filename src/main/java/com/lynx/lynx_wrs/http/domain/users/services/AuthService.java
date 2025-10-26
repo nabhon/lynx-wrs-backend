@@ -29,15 +29,12 @@ import java.util.UUID;
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
-
     private final JwtUtils jwtUtils;
-
     private final RefreshSessionService refreshSessions;
-
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public AuthDto.LoginResponse login(AuthDto.LoginRequest req) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(),req.getPassword()));
@@ -58,6 +55,7 @@ public class AuthService {
         res.setUserEmail(users.getEmail());
         res.setUserDisplayName(users.getDisplayName());
         users.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(users);
         return res;
     }
 
@@ -106,5 +104,18 @@ public class AuthService {
                 .build();
         userRepository.save(newUser);
         return rawPassword;
+    }
+
+    @Transactional
+    public void changePassword(String currentPassword, String newPassword) {
+        Users me = getUserByToken();
+        if (!passwordEncoder.matches(currentPassword, me.getPassword())) {
+            throw new AppException(ErrorCode.INVALID_CREDENTIALS, "Current password incorrect");
+        }
+        System.out.println(newPassword);
+        me.setPassword(passwordEncoder.encode(newPassword));
+        System.out.println(me.getPassword());
+        userRepository.save(me);
+        refreshSessions.clear(me.getEmail());
     }
 }

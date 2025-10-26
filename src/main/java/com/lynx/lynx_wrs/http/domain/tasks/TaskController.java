@@ -49,4 +49,20 @@ public class TaskController {
         taskService.editTasks(req);
         return ResponseEntity.ok(Map.of("message", "success"));
     }
+
+    @GetMapping("/my-working")
+    public ResponseEntity<?> myAssignedOpen() {
+        return ResponseEntity.ok(taskService.getMyAssignedOpenTasks());
+    }
+
+    @GetMapping("/pending-review")
+    public ResponseEntity<?> myPendingReview() {
+        return ResponseEntity.ok(taskService.getMyPendingReviewTasks());
+    }
+
+    @GetMapping("/{taskId}")
+    public ResponseEntity<?> getTask(@PathVariable("taskId") Long taskId) {
+        TaskDto dto = taskService.getTaskById(taskId);
+        return ResponseEntity.ok(Map.of("message", "success", "item", dto));
+    }
 }
