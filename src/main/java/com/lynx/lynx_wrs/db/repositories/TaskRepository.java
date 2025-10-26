@@ -1,11 +1,14 @@
 package com.lynx.lynx_wrs.db.repositories;
 
+import com.lynx.lynx_wrs.db.entities.TaskStatus;
 import com.lynx.lynx_wrs.http.domain.tasks.dto.TaskDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.lynx.lynx_wrs.db.entities.Tasks;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Tasks, Long> {
@@ -147,4 +150,8 @@ public interface TaskRepository extends JpaRepository<Tasks, Long> {
     WHERE t.id = :taskId
 """)
     TaskDto findDtoById(@Param("taskId") Long taskId);
+
+    long countByStatusNotIn(Collection<TaskStatus> statuses);
+
+    long countByDueDateBeforeAndStatusNotIn(LocalDate dueDateBefore, Collection<TaskStatus> statuses);
 }

@@ -83,7 +83,8 @@ public class SecurityConfig {
                                 "/api/auth/password/**",
                                 "/api/tasks/**",
                                 "/api/tasks",
-                                "/api/auth/refresh"
+                                "/api/auth/refresh",
+                                "/api/dashboard/**"
                         ).permitAll()
                         .requestMatchers("/api/admin/**"
                                 ,"/api/projects/all"
